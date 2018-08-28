@@ -1,0 +1,11 @@
+# Copy over the target from the previous build to where it needs to be
+
+- name: Create data folder
+  file:
+    path: "{{ PROSPECTUS_DATA_DIR }}"
+    state: directory
+
+- name: Copy prospectus static files
+  synchronize: # Copy is insanely slow, don't use it
+    src: "{{ PROSPECTUS_SRC_DIR }}" # /godata/pipelines/stage-prospectus/target/public
+    dest: "{{ PROSPECTUS_DATA_DIR }}"

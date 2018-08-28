@@ -1,0 +1,25 @@
+- name: Deploy edX Prospectus Service
+  hosts: all
+  become: True
+  gather_facts: True
+  vars:
+    ENABLE_DATADOG: False
+    ENABLE_NEWRELIC: False
+    CLUSTER_NAME: 'prospectus'
+    PROSPECTUS_DATA_DIR: "/www/data"
+  roles:
+#    - aws # Might need to add this back in
+    - role: nginx
+      nginx_app_dir: "{{ PROSPECTUS_DATA_DIR }}"
+      nginx_sites:
+      - prospectus
+      nginx_default_sites:
+      - prospectus
+      PROSPECTUS_NGINX_PORT: 8000
+      PROSPECTUS_PROXY_PASS: 'https://prod-edx-mktg-backend.edx.org'
+      NGINX_PROSPECTUS_PROXY_INTERCEPT_ERRORS: true
+      NGINX_ROBOT_RULES:
+      -
+        agent: '*'
+        disallow: '/'
+    - role: prospectus
